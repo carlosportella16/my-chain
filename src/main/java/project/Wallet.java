@@ -13,7 +13,7 @@ import java.util.Map;
 public class Wallet {
     public PrivateKey privateKey;
     public PublicKey publicKey;
-    public HashMap<String,TransactionOutput> UTXOs = new HashMap<String,TransactionOutput>(); // only UTXOs owned by this wallet.
+    public HashMap<String,TransactionOutput> UTXOs = new HashMap<>(); // only UTXOs owned by this wallet.
 
     public Wallet(){
         generateKeyPair();

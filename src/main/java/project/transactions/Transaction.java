@@ -13,7 +13,7 @@ public class Transaction {
     public float value; // Contains the amount we wish to send to the recipient.
     public byte[] signature; // This is to prevent anybody else from spending funds in our wallet.
 
-    public ArrayList<TransactionInput> inputs = new ArrayList<>();
+    public ArrayList<TransactionInput> inputs;
     public ArrayList<TransactionOutput> outputs = new ArrayList<>();
 
     private static int sequence = 0; // a rough count of how many transactions have been generated.
@@ -28,7 +28,7 @@ public class Transaction {
 
     public boolean processTransaction() {
 
-        if(verifySignature() == false) {
+        if(verifySignature()) {
             System.out.println("#Transaction Signature failed to verify");
             return false;
         }
@@ -75,13 +75,13 @@ public class Transaction {
     }
 
     public void generateSignature(PrivateKey privateKey) {
-        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + Float.toString(value)	;
+        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + value;
         signature = StringUtil.applyECDSASig(privateKey,data);
     }
 
     public boolean verifySignature() {
-        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + Float.toString(value)	;
-        return StringUtil.verifyECDSASig(sender, data, signature);
+        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + value;
+        return !StringUtil.verifyECDSASig(sender, data, signature);
     }
 
     public float getOutputsValue() {
@@ -97,7 +97,7 @@ public class Transaction {
         return StringUtil.applySha256(
                 StringUtil.getStringFromKey(sender) +
                         StringUtil.getStringFromKey(reciepient) +
-                        Float.toString(value) + sequence
+                        value + sequence
         );
     }
 }

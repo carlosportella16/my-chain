@@ -10,7 +10,7 @@ public class Block {
     public String previousHash;
     public String merkleRoot;
     public ArrayList<Transaction> transactions = new ArrayList<>(); // our data will be a simple message
-    private long timeStamp;
+    private final long timeStamp;
     private int nonce;
 
     public Block(String previousHash) {
@@ -22,13 +22,12 @@ public class Block {
 
     // Calculate new hash based on blocks contents
     public String calculateHash() {
-        String calculatedhash = StringUtil.applySha256(
+        return StringUtil.applySha256(
                 previousHash +
-                        Long.toString(timeStamp) +
-                        Integer.toString(nonce) +
+                        timeStamp +
+                        nonce +
                         merkleRoot
         );
-        return calculatedhash;
     }
 
     // Increases nonce value until hash target is reached
@@ -43,17 +42,16 @@ public class Block {
     }
 
     // Add transactions to this block
-    public boolean addTransaction(Transaction transaction) {
+    public void addTransaction(Transaction transaction) {
         // process transaction and check if valid, unless block is genesis block then ignore
-        if(transaction == null) return false;
+        if(transaction == null) return;
         if(!"0".equals(previousHash)) {
             if((!transaction.processTransaction())) {
                 System.out.println("Transaction failed to process. Discarded.");
-                return false;
+                return;
             }
         }
         transactions.add(transaction);
         System.out.println("Transaction Successfully added to Block");
-        return true;
     }
 }
